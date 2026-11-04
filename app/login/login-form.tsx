@@ -3,11 +3,12 @@
 import { Eye, EyeOff } from "lucide-react";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ErrorToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/field";
 import { signIn } from "./actions";
 
 export function LoginForm() {
-  const [error, action, pending] = useActionState(signIn, null);
+  const [state, action, pending] = useActionState(signIn, null);
   const [show, setShow] = useState(false);
   return (
     <form action={action} className="space-y-5" aria-busy={pending}>
@@ -25,7 +26,7 @@ export function LoginForm() {
           </button>
         </span>
       </label>
-      {error && <p role="alert" className="text-sm font-medium text-destructive-fg">{error}</p>}
+      <ErrorToast message={state?.error} token={state} />
       <Button type="submit" variant="soft" square loading={pending} className="w-full font-semibold !normal-case !tracking-normal">
         Sign In
       </Button>

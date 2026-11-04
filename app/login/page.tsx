@@ -1,16 +1,20 @@
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
   return (
     <>
       <header className="bg-navy-deep">
-        <div className="mx-auto flex h-20 max-w-6xl items-center gap-3 px-4 sm:h-24 sm:px-8">
-          <Image src="/tab-icon.webp" alt="" width={44} height={44} className="size-9 sm:size-11" priority />
-          <div className="text-gold">
-            <p className="text-lg font-light tracking-[0.35em] sm:text-2xl">STAR GENERATION</p>
-            <p className="text-[9px] tracking-[0.3em] sm:text-[10px]">Creating stars for the future generation</p>
-          </div>
+        {/* Sizes scale with the viewport so margins and logo keep the proportions of the Star Generation site. */}
+        <div className="flex h-[clamp(64px,6.6vw,104px)] items-center justify-between gap-6 px-[clamp(16px,6.2vw,140px)]">
+          <Image src="/stargeneration-logo.webp" alt="Star Generation, creating stars for the future generation" width={800} height={116} priority className="h-auto w-[clamp(190px,21vw,340px)]" />
+          <nav aria-label="Star Generation site" className="hidden items-center gap-[clamp(24px,2.2vw,40px)] text-[clamp(14px,1.05vw,18px)] font-semibold uppercase text-white lg:flex">
+            {["Expertise", "Our Programs", "Achievements", "Career", "About Us"].map((l) => (
+              <a key={l} href="https://stargeneration.net" className="hover:text-gold-soft">{l}</a>
+            ))}
+          </nav>
+          <Button href="/login" aria-current="page">Sign In</Button>
         </div>
       </header>
       <main className="bg-grid grid flex-1 place-items-center px-4 py-12">

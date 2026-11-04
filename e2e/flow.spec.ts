@@ -15,11 +15,21 @@ async function login(page: Page, user: string) {
   await page.waitForURL(new RegExp(`/(admin|tutor|student)`));
 }
 
-// A datetime-local value in WIB, shifted by whole days from now.
-const wib = (daysAgo: number, hour: string) => {
+// Drives the custom date and time picker: walk back to the month, pick the day, hour and minute.
+async function pickDateTime(page: Page, label: string, daysAgo: number, hour: string, minute: string) {
   const d = new Date(Date.now() + 7 * 3600_000 - daysAgo * 86400_000);
-  return `${d.toISOString().slice(0, 10)}T${hour}`;
-};
+  const iso = d.toISOString().slice(0, 10);
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel(label).click();
+  const header = new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }).format(d);
+  for (let i = 0; i < 14 && !(await dialog.getByText(header, { exact: true }).isVisible()); i++) {
+    await dialog.getByRole("button", { name: "Previous month" }).click();
+  }
+  await dialog.getByRole("button", { name: iso }).click();
+  await dialog.getByRole("button", { name: `Hour ${hour}` }).click();
+  await dialog.getByRole("button", { name: `Minute ${minute}` }).click();
+  await dialog.getByRole("button", { name: "Done" }).click();
+}
 
 test("enrollment to paid access to approved report to earnings", async ({ page }) => {
   // 1. Admin creates a class.
@@ -40,8 +50,8 @@ test("enrollment to paid access to approved report to earnings", async ({ page }
   await page.goto("/tutor/schedule");
   await page.getByRole("button", { name: "Schedule lesson" }).first().click();
   await page.locator("select[name=class_id]").selectOption({ label: title });
-  await page.getByLabel("Starts (WIB)").fill(wib(AGO, "10:00"));
-  await page.getByLabel("Ends (WIB)").fill(wib(AGO, "11:30"));
+  await pickDateTime(page, "Starts (WIB)", AGO, "10", "00");
+  await pickDateTime(page, "Ends (WIB)", AGO, "11", "30");
   await page.getByRole("dialog").getByRole("button", { name: "Schedule lesson" }).click();
   await expect(page.getByRole("dialog")).toBeHidden();
   await expect(page.getByRole("cell", { name: title }).first()).toBeVisible();
@@ -70,7 +80,7 @@ test("enrollment to paid access to approved report to earnings", async ({ page }
 
   // 5. Student now has schedule access.
   await login(page, "bagas");
-  await page.goto("/student/schedule?month=" + wib(AGO, "10:00").slice(0, 7));
+  await page.goto("/student/schedule?month=" + new Date(Date.now() + 7 * 3600_000 - AGO * 86400_000).toISOString().slice(0, 7));
   await expect(page.getByRole("button", { name: new RegExp(title) }).first()).toBeVisible();
 
   // 6. Tutor submits the report.
@@ -103,4 +113,14 @@ test("enrollment to paid access to approved report to earnings", async ({ page }
   await login(page, "rina");
   await page.goto("/tutor/earnings");
   await expect(page.getByRole("row", { name: new RegExp(title) })).toContainText("150.000");
+});
+
+test("every role can sign out from the account menu", async ({ page }) => {
+  for (const user of ["bagas", "rina", "admin"]) {
+    await login(page, user);
+    await page.getByRole("button", { name: "Account menu" }).click();
+    await page.getByRole("menuitem", { name: "Sign Out" }).click();
+    await page.waitForURL(/\/login/);
+    await expect(page.getByRole("heading", { name: "Sign in to your account" })).toBeVisible();
+  }
 });

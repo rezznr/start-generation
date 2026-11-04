@@ -1,5 +1,3 @@
-import { PageEntrance } from "@/components/page-entrance";
-
 export default function Template({ children }: { children: React.ReactNode }) {
-  return <PageEntrance>{children}</PageEntrance>;
+  return <div className="animate-[sg-page_160ms_ease-out]">{children}</div>;
 }

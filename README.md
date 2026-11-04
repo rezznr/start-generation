@@ -17,6 +17,7 @@ pnpm install
 cp .env.example .env.local   # then fill in the values below
 pnpm db:migrate              # applies supabase/migrations/*.sql
 pnpm db:seed                 # creates demo users and data through the real RPCs
+# or, without Node: run supabase/seed.sql in the Supabase SQL editor (same data), or `pnpm db:seed:sql`
 pnpm dev                     # http://localhost:3000
 ```
 

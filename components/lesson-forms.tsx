@@ -1,3 +1,4 @@
+import { DateTimeField } from "@/components/ui/date-time-field";
 import { DialogForm } from "@/components/ui/dialog-form";
 import { Field, Input, Select, Textarea } from "@/components/ui/field";
 import { deleteLesson, saveLesson, saveReport } from "@/lib/actions";
@@ -19,10 +20,8 @@ export function LessonForm({ classes, lesson }: {
           {classes.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
         </Select>
       </Field>
-      <Field label="Starts (WIB)"><Input name="starts" type="datetime-local" required defaultValue={lesson && toWibInput(lesson.starts_at)} /></Field>
-      <Field label="Ends (WIB)" hint="The end time must be after the start. A lesson may start exactly when another ends.">
-        <Input name="ends" type="datetime-local" required defaultValue={lesson && toWibInput(lesson.ends_at)} />
-      </Field>
+      <DateTimeField label="Starts (WIB)" name="starts" defaultValue={lesson && toWibInput(lesson.starts_at)} />
+      <DateTimeField label="Ends (WIB)" hint="The end time must be after the start. A lesson may start exactly when another ends." name="ends" defaultValue={lesson && toWibInput(lesson.ends_at)} />
     </DialogForm>
   );
 }

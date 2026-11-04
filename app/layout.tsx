@@ -7,7 +7,6 @@ const dmSans = DM_Sans({ variable: "--font-dm-sans", subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Star Generation | Group Class Enrollment & Billing",
   description: "Group class enrollment, billing and tutor earnings for Star Generation.",
-  icons: { icon: "/tab-icon.webp" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

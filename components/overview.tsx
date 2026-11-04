@@ -6,7 +6,7 @@ import { nowMs, wibDay, wibTime } from "@/lib/format";
 
 export function WelcomeBanner({ name, line }: { name: string; line: string }) {
   return (
-    <section className="banner-gold rounded-card px-8 py-7">
+    <section className="sg-rise banner-gold rounded-card px-8 py-7">
       <h1 className="relative z-10 text-2xl font-bold">Welcome Back, {name.split(" ")[0]}!</h1>
       <p className="relative z-10 mt-1 text-lg">{line}</p>
     </section>
@@ -63,12 +63,12 @@ export function MiniCalendar({ lessons, basePath, cal, day }: { lessons: Lesson[
             const key = date.toISOString().slice(0, 10);
             const inMonth = key.startsWith(month);
             const isToday = key === today;
-            const isSel = key === selected && !isToday;
+            const isSel = key === selected;
             return (
               <Link key={key} href={href(month, key)} aria-label={key} aria-current={isToday ? "date" : undefined}
-                className={`mx-auto grid size-10 place-items-center rounded-full text-[15px] ${isToday ? "bg-navy font-medium text-white" : isSel ? "bg-border font-medium" : "hover:bg-navy/[0.06]"} ${!inMonth && !isToday ? "text-muted/60" : ""}`}>
+                className={`mx-auto grid size-10 place-items-center rounded-full text-[15px] ${isSel ? "bg-navy font-medium text-white" : isToday ? "bg-gold-soft font-medium" : "hover:bg-navy/[0.06]"} ${!inMonth && !isSel && !isToday ? "text-muted/60" : ""}`}>
                 <span className="relative">{date.getUTCDate()}
-                  {withLessons.has(key) && <span className={`absolute -bottom-1.5 left-1/2 size-1 -translate-x-1/2 rounded-full ${isToday ? "bg-gold" : "bg-gold-hover"}`} aria-hidden />}
+                  {withLessons.has(key) && <span className={`absolute -bottom-1.5 left-1/2 size-1 -translate-x-1/2 rounded-full ${isSel ? "bg-gold" : "bg-gold-hover"}`} aria-hidden />}
                 </span>
               </Link>
             );

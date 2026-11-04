@@ -4,10 +4,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 // Shown right after login while the session and role are resolved: full shell, then content.
 export default function Loading() {
   return (
-    <div className="flex min-h-dvh bg-canvas">
-      <aside className="hidden w-72 shrink-0 space-y-3 border-r border-border bg-surface p-4 md:block" aria-hidden>
-        <Skeleton className="mb-6 h-10 w-48" />
-        {[0, 1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
+    <div className="flex min-h-dvh bg-surface">
+      <aside className="hidden w-72 shrink-0 space-y-3 bg-navy p-4 md:block" aria-hidden>
+        <Skeleton className="mb-6 h-10 w-48 !bg-white/15" />
+        {[0, 1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-12 w-full !bg-white/10" />)}
       </aside>
       <div className="min-w-0 flex-1">
         <header className="flex h-[72px] items-center gap-4 border-b border-border bg-surface px-5" aria-hidden>
