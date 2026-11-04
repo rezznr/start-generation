@@ -107,13 +107,18 @@ export function AppFrame({ items, name, role, signOut, children }: Props) {
   // pending is only valid until the path changes (derived, no effect needed).
   const [pick, setPick] = useState<{ href: string; from: string } | null>(null);
   const pending = pick && pick.from === path ? pick.href : null;
-  const onPick = (href: string) => setPick({ href, from: path });
+  const onPick = (href: string) => { if (!isActive(items, href, path)) setPick({ href, from: path }); };
   const current = pending ? items.find((i) => i.href === pending)! : [...items].reverse().find((i) => isActive(items, i.href, path)) ?? items[0];
   const Icon = icons[current.icon as keyof typeof icons];
   const toggle = "grid size-11 shrink-0 place-items-center rounded-lg text-navy hover:bg-navy/[0.06]";
 
   return (
     <div className="flex min-h-dvh bg-surface">
+      {pending && (
+        <div className="fixed inset-x-0 top-0 z-[90] h-0.5 overflow-hidden bg-gold/20" role="progressbar" aria-label="Loading page">
+          <div className="h-full w-1/3 animate-[sg-bar_1s_ease-in-out_infinite] bg-gold" />
+        </div>
+      )}
       <motion.aside animate={{ width: collapsed ? 84 : 288 }} initial={false} transition={{ duration: reduce ? 0 : 0.18 }}
         className="sticky top-0 hidden h-dvh shrink-0 flex-col overflow-hidden bg-navy md:flex">
         <Brand collapsed={collapsed} />
@@ -148,7 +153,7 @@ export function AppFrame({ items, name, role, signOut, children }: Props) {
           <WibClock />
           <UserMenu name={name} role={role} signOut={signOut} />
         </header>
-        <main className="min-w-0 flex-1 p-4 sm:p-6">{children}</main>
+        <main aria-busy={!!pending} className={`min-w-0 flex-1 p-4 transition-opacity duration-150 sm:p-6 ${pending ? "opacity-60" : ""}`}>{children}</main>
       </div>
     </div>
   );

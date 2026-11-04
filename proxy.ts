@@ -19,14 +19,16 @@ export async function proxy(request: NextRequest) {
       },
     },
   );
-  const { data } = await supabase.auth.getUser();
+  // getClaims verifies the JWT signature locally (cached JWKS), so no Auth server round trip per request.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims;
   const onLogin = request.nextUrl.pathname === "/login";
 
-  if (!data.user && !onLogin) return NextResponse.redirect(new URL("/login", request.url));
-  if (data.user && onLogin) return NextResponse.redirect(new URL("/dashboard", request.url));
+  if (!user && !onLogin) return NextResponse.redirect(new URL("/login", request.url));
+  if (user && onLogin) return NextResponse.redirect(new URL("/dashboard", request.url));
   return response;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|tab-icon.webp|.*\\.(?:svg|png|jpg|webp)$).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|webp)$).*)"],
 };
