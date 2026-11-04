@@ -12,6 +12,7 @@ export const getSession = cache(async () => {
   const uid = data?.claims.sub;
   if (!uid) redirect("/login");
   const { data: profile } = await supabase.from("profiles").select("id, role, full_name").eq("id", uid).single();
-  if (!profile) redirect("/login");
+  // A valid token without a profile row would loop through /login and /dashboard; reset clears the cookies first.
+  if (!profile) redirect("/auth/reset");
   return { supabase, profile: profile as { id: string; role: Role; full_name: string } };
 });
