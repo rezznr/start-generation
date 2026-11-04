@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Children, cloneElement, isValidElement, type ReactNode } from "react";
 
 export function Card({ title, action, children, className = "" }: {
   title?: string; action?: ReactNode; children: ReactNode; className?: string;
@@ -87,19 +87,43 @@ export function CapacityIndicator({ reserved, capacity }: { reserved: number; ca
   );
 }
 
+const textOf = (n: ReactNode): string => (typeof n === "string" ? n : "");
+
+// Wide screens: a normal table. Phones: every row becomes a card, with each cell labelled by its
+// column header (copied from <thead> below), so nothing scrolls sideways or wraps one word per line.
+type WithChildren = { children?: ReactNode };
+
 export function Table({ children }: { children: ReactNode }) {
-  // Horizontal scroll stays inside this wrapper so the page itself never overflows.
+  const parts = Children.toArray(children);
+  const head = parts.find((c) => isValidElement<WithChildren>(c) && c.type === "thead");
+  const headRow = isValidElement<WithChildren>(head) ? Children.toArray(head.props.children)[0] : null;
+  const labels = isValidElement<WithChildren>(headRow)
+    ? Children.toArray(headRow.props.children).map((th) => (isValidElement<WithChildren>(th) ? textOf(th.props.children) : ""))
+    : [];
+  const kids = parts.map((c) => {
+    if (!isValidElement<WithChildren>(c) || c.type !== "tbody") return c;
+    const rows = Children.toArray(c.props.children).map((tr) => {
+      if (!isValidElement<WithChildren>(tr)) return tr;
+      const cells = Children.toArray(tr.props.children).map((td, i) =>
+        isValidElement<{ label?: string }>(td) && td.type === Td ? cloneElement(td, { label: labels[i] }) : td);
+      return cloneElement(tr, undefined, cells);
+    });
+    return cloneElement(c, undefined, rows);
+  });
   return (
     <div className="overflow-x-auto rounded-card border border-border bg-surface shadow-card">
-      <table className="w-full text-left text-sm">{children}</table>
+      <table className="w-full text-left text-sm max-md:[&_tbody]:block max-md:[&_thead]:sr-only max-md:[&_tbody_tr]:block max-md:[&_tbody_tr]:space-y-1.5 max-md:[&_tbody_tr]:border-b max-md:[&_tbody_tr]:border-border/70 max-md:[&_tbody_tr]:p-4 max-md:[&_tbody_tr:last-child]:border-b-0">{kids}</table>
     </div>
   );
 }
 export const Th = ({ children, right }: { children?: ReactNode; right?: boolean }) => (
   <th scope="col" className={`whitespace-nowrap border-b border-border bg-canvas/60 px-4 py-3 text-xs font-bold uppercase tracking-wide text-muted ${right ? "text-right" : ""}`}>{children}</th>
 );
-export const Td = ({ children, right, className = "" }: { children?: ReactNode; right?: boolean; className?: string }) => (
-  <td className={`border-b border-border/70 px-4 py-3 align-middle ${right ? "text-right tabular-nums" : ""} ${className}`}>{children}</td>
+export const Td = ({ children, right, className = "", label }: { children?: ReactNode; right?: boolean; className?: string; label?: string }) => (
+  <td data-label={label || undefined}
+    className={`border-b border-border/70 px-4 py-3 align-middle max-md:flex max-md:items-center max-md:justify-between max-md:gap-4 max-md:border-0 max-md:p-0 max-md:before:shrink-0 max-md:before:text-xs max-md:before:font-bold max-md:before:uppercase max-md:before:tracking-wide max-md:before:text-muted max-md:before:content-[attr(data-label)] ${label ? "" : "max-md:justify-end"} ${right ? "text-right tabular-nums" : ""} ${className}`}>
+    {label ? <span className="min-w-0 max-md:text-right">{children}</span> : children}
+  </td>
 );
 
 // Compact metric tile: icon, label, and the value in a soft ring.

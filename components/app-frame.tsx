@@ -91,10 +91,10 @@ function WibClock() {
     return () => clearInterval(id);
   }, []);
   return (
-    <div className="hidden items-center gap-2 text-sm font-medium sm:flex" aria-label="Current time in WIB">
-      <Clock className="size-[18px] text-muted" aria-hidden />
+    <div className="flex items-center gap-1.5 text-sm font-medium max-md:order-2 sm:gap-2" aria-label="Current time in WIB">
+      <Clock className="size-[18px] text-muted max-sm:hidden" aria-hidden />
       <span className="tabular-nums">{now ?? "--:--"}</span>
-      <span className="text-xs text-muted">WIB</span>
+      <span className="text-xs text-muted max-sm:hidden">WIB</span>
     </div>
   );
 }
@@ -131,10 +131,10 @@ export function AppFrame({ items, name, role, signOut, children }: Props) {
             <PanelLeft className="size-[22px]" strokeWidth={1.75} />
           </button>
           <Dialog.Root open={open} onOpenChange={setOpen}>
-            <Dialog.Trigger className={`${toggle} md:hidden`} aria-label="Open navigation"><MenuIcon /></Dialog.Trigger>
+            <Dialog.Trigger className={`${toggle} md:hidden max-md:order-5`} aria-label="Open navigation"><MenuIcon /></Dialog.Trigger>
             <Dialog.Portal>
-              <Dialog.Overlay className="fixed inset-0 z-40 bg-navy/40 data-[state=open]:animate-[sg-fade_150ms_ease-out]" />
-              <Dialog.Content className="fixed inset-y-0 left-0 z-50 flex w-[300px] max-w-[85vw] flex-col bg-navy shadow-xl outline-none data-[state=open]:animate-[sg-drawer_180ms_ease-out]">
+              <Dialog.Overlay className="fixed inset-0 z-40 bg-navy/40 backdrop-blur-[2px] data-[state=closed]:animate-[sg-overlay-out_220ms_ease-out_forwards] data-[state=open]:animate-[sg-overlay-in_300ms_ease-out]" />
+              <Dialog.Content className="fixed inset-y-0 left-0 z-50 flex w-[300px] max-w-[85vw] flex-col bg-navy shadow-xl outline-none will-change-transform data-[state=closed]:animate-[sg-drawer-out_220ms_cubic-bezier(0.4,0,1,1)_forwards] data-[state=open]:animate-[sg-drawer-in_320ms_cubic-bezier(0.32,0.72,0,1)]">
                 <Dialog.Title className="sr-only">Navigation</Dialog.Title>
                 <Dialog.Description className="sr-only">Pages available to your role</Dialog.Description>
                 <div className="flex items-center justify-between pr-2"><Brand />
@@ -146,12 +146,12 @@ export function AppFrame({ items, name, role, signOut, children }: Props) {
           </Dialog.Root>
 
           <span className="hidden size-12 shrink-0 place-items-center rounded-lg bg-canvas text-gold sm:grid" aria-hidden><Icon className="size-6" strokeWidth={1.75} /></span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-lg font-bold leading-tight sm:text-xl">{current.label}</p>
+          <div className="min-w-0 flex-1 max-md:order-4 max-md:text-right">
+            <p className="truncate text-base font-bold leading-tight sm:text-xl">{current.label}</p>
             <p className="hidden truncate text-sm text-muted sm:block">{current.subtitle}</p>
           </div>
           <WibClock />
-          <UserMenu name={name} role={role} signOut={signOut} />
+          <div className="max-md:order-1"><UserMenu name={name} role={role} signOut={signOut} /></div>
         </header>
         <main aria-busy={!!pending} className={`min-w-0 flex-1 p-4 transition-opacity duration-150 sm:p-6 ${pending ? "opacity-60" : ""}`}>{children}</main>
       </div>

@@ -77,6 +77,10 @@ body {
 @keyframes sg-page { from { opacity: 0.55; transform: translateY(3px); } }
 @keyframes sg-toast { from { opacity: 0; transform: translate(-50%, -12px); } }
 @keyframes sg-bar { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
+@keyframes sg-drawer-in { from { transform: translateX(-100%); } }
+@keyframes sg-drawer-out { to { transform: translateX(-100%); } }
+@keyframes sg-overlay-in { from { opacity: 0; } }
+@keyframes sg-overlay-out { to { opacity: 0; } }
 @keyframes sg-fade { from { opacity: 0; } }
 @keyframes sg-pop { from { opacity: 0; transform: translateY(8px); } }
 @keyframes sg-sheet { from { opacity: 0; transform: translateY(16px); } }
