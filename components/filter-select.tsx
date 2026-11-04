@@ -13,7 +13,7 @@ export function FilterSelect({ name, label, options }: { name: string; label: st
   const set = (v: string) => {
     const next = new URLSearchParams(params);
     if (v && v !== options[0].value) next.set(name, v); else next.delete(name);
-    router.replace(`${path}?${next}`);
+    router.replace(`${path}?${next}`, { scroll: false });
   };
   const active = value !== options[0].value;
 

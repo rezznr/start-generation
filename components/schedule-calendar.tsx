@@ -47,9 +47,9 @@ export function ScheduleCalendar({ lessons, month, basePath, extraParams = "" }:
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <Link href={href(shift(month, -1))} className={nav} aria-label="Previous month"><ChevronLeft className="size-5" /></Link>
-        <Link href={href(thisMonth)} className="flex h-11 items-center rounded-card border border-border bg-white px-4 text-sm font-bold hover:bg-navy/5">Today</Link>
-        <Link href={href(shift(month, 1))} className={nav} aria-label="Next month"><ChevronRight className="size-5" /></Link>
+        <Link scroll={false} href={href(shift(month, -1))} className={nav} aria-label="Previous month"><ChevronLeft className="size-5" /></Link>
+        <Link scroll={false} href={href(thisMonth)} className="flex h-11 items-center rounded-card border border-border bg-white px-4 text-sm font-bold hover:bg-navy/5">Today</Link>
+        <Link scroll={false} href={href(shift(month, 1))} className={nav} aria-label="Next month"><ChevronRight className="size-5" /></Link>
         <h2 className="ml-2 text-lg font-bold">{monthLabel.format(first)}</h2>
         <span className="ml-auto text-xs text-muted">All times in WIB (UTC+7)</span>
       </div>
