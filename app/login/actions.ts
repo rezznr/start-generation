@@ -12,7 +12,10 @@ export type SignInState = { error: string } | null;
 export async function signIn(_: SignInState, form: FormData): Promise<SignInState> {
   const parsed = schema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { error: "Enter a valid email and password." };
-  const { error } = await (await createClient()).auth.signInWithPassword(parsed.data);
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: "Email or password is incorrect. Please check your details and try again." };
-  redirect("/dashboard");
+  // Go straight to the role home: the extra /dashboard hop is one more blank wait.
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).single();
+  redirect(profile ? `/${profile.role}` : "/dashboard");
 }
